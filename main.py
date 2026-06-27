@@ -1,5 +1,5 @@
 from fastapi import FastAPI,HTTPException
-from pydantic import BaseModal
+from pydantic import BaseModel
 import joblib
 print("library impoerted ")
 import numpy as np 
