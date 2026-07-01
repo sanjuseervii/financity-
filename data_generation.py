@@ -23,12 +23,20 @@ for age in ages:
     else:
         goal = np.random.choice(['Income Generation', 'Wealth Optimization'], p=[0.40, 0.60])
     financial_goals.append(goal)
+personality=[]
+for age in ages:
+    if age <= 22:
+        person= np.random.choice(['Introvert', 'extrovert'], p=[0.75, 0.25])
+    else:
+        person= np.random.choice(['Introvert', 'extrovert'], p=[0.40, 0.60])
+    personality.append(person)
 
 df = pd.DataFrame({
     'Age': ages,
     'Gender': genders,
     'Qualification': qualifications,
-    'Financial_Goal': financial_goals
+    'Financial_Goal': financial_goals,
+    'personality':personality
 })
 
 target_paths = []
@@ -36,19 +44,39 @@ for i in range(num_rows):
     goal = df['Financial_Goal'].iloc[i]
     qual = df['Qualification'].iloc[i]
     age = df['Age'].iloc[i]
+    ptype=df['personality'].iloc[i]
     
-    # 2-Earning & 2-Wealth Balanced Categories
     if goal == 'Income Generation':
         if qual in ['Undergraduate', 'Postgraduate']:
-            p_dist = [0.70, 0.15, 0.10, 0.05]
+            # Highly qualified users aiming for active income
+            if ptype == 'Introvert':
+                # Introverts ko screen کے piche ka deep-tech kaam prefer hoga (e.g., Freelance Coding)
+                p_dist = [0.80, 0.10, 0.08, 0.02]
+            else:
+                # Extroverts ko group collaboration/content creation active lines prefer hongi
+                p_dist = [0.55, 0.30, 0.10, 0.05]
         else:
-            p_dist = [0.15, 0.65, 0.15, 0.05]
+            # High School or Diploma categories
+            if ptype == 'Introvert':
+                p_dist = [0.20, 0.65, 0.10, 0.05]
+            else:
+                p_dist = [0.10, 0.75, 0.10, 0.05]
+
     elif goal == 'Wealth Optimization':
         if age >= 25:
-            p_dist = [0.05, 0.05, 0.20, 0.70]
+            # Mature age bracket looking for safety and portfolio building
+            if ptype == 'Introvert':
+                # Deep market analysis/Defensive asset mapping
+                p_dist = [0.02, 0.03, 0.15, 0.80]
+            else:
+                # Dynamic portfolio growth / Active investment networking
+                p_dist = [0.05, 0.05, 0.40, 0.50]
         else:
-            p_dist = [0.10, 0.10, 0.60, 0.20]
-
+            # Young age bracket (under 25) with high risk appetite
+            if ptype == 'Introvert':
+                p_dist = [0.08, 0.07, 0.65, 0.20]
+            else:
+                p_dist = [0.10, 0.10, 0.75, 0.05]
     chosen_path = np.random.choice(
         ['Tech Side-Hustler', 'Micro-Earning Starter', 'Tactical Growth Investor', 'Defensive Capital Saver'], 
         p=p_dist
